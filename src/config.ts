@@ -1,5 +1,4 @@
-import {homedir} from 'node:os'
-import {join, resolve} from 'node:path'
+import {resolve} from 'node:path'
 
 function getPositiveInteger(name: string, fallback: number): number {
 	const value = process.env[name]
@@ -33,9 +32,7 @@ export const config = {
 
 	upstreamUrl: getUrl('KOKORO_URL', 'http://127.0.0.1:8880'),
 
-	cacheDir: resolve(
-		process.env.CACHE_DIR ?? join(homedir(), '.cache', 'kokoro-proxxy'),
-	),
+	cacheDir: resolve(process.env.CACHE_DIR ?? 'data'),
 
 	memoryCacheMaxBytes: getPositiveInteger('MEMORY_CACHE_MAX_BYTES', 100 * mib),
 
