@@ -1,0 +1,38 @@
+{
+  "name": "kokoro-proxy",
+  "version": "0.1.0",
+  "description": "",
+  "type": "module",
+  "main": "",
+  "module": "",
+  "exports": {
+    ".": {}
+  },
+  "types": "",
+  "files": [],
+  "scripts": {
+    "build": "wireit"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2",
+    "wireit": "^0.15.0"
+  },
+  "wireit": {
+    "build": {
+      "command": "tsc --pretty",
+      "clean": "if-file-deleted",
+      "files": [
+        "./tsconfig.json",
+        "./src"
+      ],
+      "output": [
+        "./lib"
+      ]
+    }
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.5",
+    "hono": "^4.13.14"
+  }
+}
