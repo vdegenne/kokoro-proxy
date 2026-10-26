@@ -1,5 +1,6 @@
 import {serve} from '@hono/node-server'
 import {Hono} from 'hono'
+import {cors} from 'hono/cors'
 import {Readable} from 'node:stream'
 
 import {getSpeech} from './cache.js'
@@ -7,6 +8,15 @@ import {config} from './config.js'
 import {closeStats} from './stats.js'
 
 const app = new Hono()
+
+app.use(
+	'*',
+	cors({
+		origin: '*',
+		allowMethods: ['GET', 'POST', 'OPTIONS'],
+		allowHeaders: ['Content-Type'],
+	}),
+)
 
 app.get('/health', async (c) => {
 	try {
