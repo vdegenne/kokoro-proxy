@@ -12,9 +12,9 @@ const app = new Hono()
 app.use(
 	'*',
 	cors({
-		origin: '*',
+		origin: ['http://localhost:35107'],
 		allowMethods: ['GET', 'POST', 'OPTIONS'],
-		allowHeaders: ['Content-Type'],
+		allowHeaders: ['Content-Type', 'Authorization'],
 	}),
 )
 
@@ -128,25 +128,38 @@ const server = serve({
 	port: config.port,
 })
 
-console.log(`Kokoro proxy listening on http://${config.host}:${config.port}`)
+console.log(`
+##############################
+#       Kokoro Proxy         #
+##############################
+# Server:  http://${config.host}:${config.port}
+# Cache:   ${config.cacheDir}
+# Upstream: ${config.upstreamUrl}
+##############################
+`)
 
 let shuttingDown = false
 
-async function shutdown(): Promise<void> {
+async function shutdown(signal: NodeJS.Signals): Promise<void> {
 	if (shuttingDown) return
 	shuttingDown = true
+
+	console.log(`\nReceived ${signal}. Shutting down Kokoro Proxy...`)
 
 	server.close()
 
 	try {
 		await closeStats()
+		console.log('Usage stats flushed successfully.')
 	} catch (error) {
 		console.error('Failed to flush usage stats:', error)
 		process.exitCode = 1
 	}
+
+	console.log('Kokoro Proxy stopped.')
 }
 
-process.on('SIGINT', () => void shutdown())
-process.on('SIGTERM', () => void shutdown())
+process.on('SIGINT', () => void shutdown('SIGINT'))
+process.on('SIGTERM', () => void shutdown('SIGTERM'))
 
 export {app}
