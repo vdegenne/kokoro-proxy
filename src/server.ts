@@ -12,7 +12,11 @@ const app = new Hono()
 app.use(
 	'*',
 	cors({
-		origin: ['http://localhost:35107'],
+		origin: [
+			'http://localhost:35107',
+			'https://glaizme.web.app',
+			'https://gl-ai-z.win',
+		],
 		allowMethods: ['GET', 'POST', 'OPTIONS'],
 		allowHeaders: ['Content-Type', 'Authorization'],
 	}),
