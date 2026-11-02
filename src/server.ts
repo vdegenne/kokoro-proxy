@@ -24,15 +24,17 @@ app.use(
 
 app.get('/health', async (c) => {
 	try {
-		const response = await fetch(`${config.upstreamUrl}/v1/voices`, {
+		const response = await fetch(`${config.upstreamUrl}/health`, {
 			signal: AbortSignal.timeout(3000),
 		})
 
-		if (!response.ok) {
-			return c.json({status: 'unhealthy', upstreamStatus: response.status}, 503)
-		}
-
-		return c.json({status: 'ok'})
+		return new Response(response.body, {
+			status: response.status,
+			headers: {
+				'content-type':
+					response.headers.get('content-type') ?? 'application/json',
+			},
+		})
 	} catch {
 		return c.json({status: 'unhealthy'}, 503)
 	}
