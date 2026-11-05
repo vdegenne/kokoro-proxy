@@ -11,7 +11,8 @@
   "types": "",
   "files": [],
   "scripts": {
-    "build": "wireit"
+    "build": "wireit",
+    "serve": "wireit"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
@@ -29,6 +30,12 @@
       "output": [
         "./lib"
       ]
+    },
+    "serve": {
+      "service": true,
+      "command": "node ./lib/server.js",
+      "dependencies": ["build"],
+      "files": []
     }
   },
   "dependencies": {
