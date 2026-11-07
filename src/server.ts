@@ -60,6 +60,55 @@ app.get('/v1/voices', async (c) => {
 	}
 })
 
+app.get('/v1/audio/speech', async (c) => {
+	const input = c.req.query('input')
+	const voice = c.req.query('voice')
+	const speed = Number(c.req.query('speed') ?? 1)
+	const volumeMultiplier = Number(c.req.query('volume_multiplier') ?? 1)
+
+	if (!input?.trim() || !voice?.trim()) {
+		return c.json({error: 'input and voice must be non-empty strings'}, 400)
+	}
+
+	if (
+		!Number.isFinite(speed) ||
+		speed <= 0 ||
+		!Number.isFinite(volumeMultiplier) ||
+		volumeMultiplier <= 0
+	) {
+		return c.json(
+			{error: 'speed and volume_multiplier must be positive numbers'},
+			400,
+		)
+	}
+
+	try {
+		const audio = await getSpeech({
+			input,
+			voice,
+			speed,
+			volume_multiplier: volumeMultiplier,
+		})
+
+		const stream =
+			audio.body instanceof Readable
+				? Readable.toWeb(audio.body)
+				: Readable.toWeb(Readable.from([audio.body]))
+
+		return new Response(stream as globalThis.ReadableStream<Uint8Array>, {
+			headers: {
+				'content-type': 'audio/mpeg',
+				'content-length': String(audio.size),
+				// 'cache-control': 'private, max-age=86400',
+				'cache-control': 'private, max-age=31536000, immutable',
+			},
+		})
+	} catch (error) {
+		console.error('Speech synthesis failed:', error)
+		return c.json({error: 'Speech synthesis failed'}, 502)
+	}
+})
+
 app.post('/v1/audio/speech', async (c) => {
 	let body: unknown
 
