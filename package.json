@@ -1,6 +1,6 @@
 {
 	"name": "@vdegenne/kokoro-proxy",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "A lightweight Kokoro TTS proxy with audio caching and reusable utilities.",
 	"type": "module",
 	"exports": {

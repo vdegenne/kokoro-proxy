@@ -6,6 +6,7 @@ import {Readable} from 'node:stream'
 import {pipeline} from 'node:stream/promises'
 
 import {config} from './config.js'
+import {getAudioPath} from './core.js'
 import {getCacheKey, type SpeechOptions} from './hash.js'
 import {recordUsage} from './stats.js'
 
@@ -22,10 +23,6 @@ const memoryCache = new Map<string, MemoryEntry>()
 const inFlight = new Map<string, Promise<void>>()
 
 let memoryCacheSize = 0
-
-export function getAudioPath(hash: string): string {
-	return `audio/${hash.slice(0, 2)}/${hash.slice(2, 4)}/${hash}.mp3`
-}
 
 export function getDiskPath(hash: string): string {
 	return join(config.cacheDir, getAudioPath(hash))
