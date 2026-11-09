@@ -1,5 +1,3 @@
-import {createHash} from 'node:crypto'
-
 export interface SpeechOptions {
 	input: string
 	voice: string
@@ -7,7 +5,7 @@ export interface SpeechOptions {
 	volume_multiplier: number
 }
 
-export function getCacheKey(options: SpeechOptions): string {
+export async function getCacheKey(options: SpeechOptions): Promise<string> {
 	const payload = JSON.stringify([
 		options.input,
 		options.voice,
@@ -15,5 +13,12 @@ export function getCacheKey(options: SpeechOptions): string {
 		options.volume_multiplier,
 	])
 
-	return createHash('sha256').update(payload).digest('hex')
+	const data = new TextEncoder().encode(payload)
+	const hash = await crypto.subtle.digest('SHA-256', data)
+
+	return Array.from(new Uint8Array(hash))
+		.map(function (byte) {
+			return byte.toString(16).padStart(2, '0')
+		})
+		.join('')
 }

@@ -156,7 +156,7 @@ async function synthesize(options: SpeechOptions, hash: string): Promise<void> {
 }
 
 export async function getSpeech(options: SpeechOptions): Promise<CachedAudio> {
-	const hash = getCacheKey(options)
+	const hash = await getCacheKey(options)
 
 	let audio = getMemory(hash)
 
