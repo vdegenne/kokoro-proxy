@@ -9,6 +9,7 @@ import {
 } from 'node:fs/promises'
 import {dirname, join} from 'node:path'
 
+import {getDiskPath} from './cache.js'
 import {config} from './config.js'
 
 type UsageCounts = Record<string, number>
@@ -21,12 +22,7 @@ if (!Number.isSafeInteger(maxBytes) || maxBytes <= 0) {
 	throw new Error('DISK_CACHE_MAX_BYTES must be a positive integer')
 }
 
-const audioDir = join(config.cacheDir, 'audio')
 const statsPath = join(config.cacheDir, 'stats.json')
-
-function getAudioPath(hash: string): string {
-	return join(audioDir, hash.slice(0, 2), hash.slice(2, 4), `${hash}.mp3`)
-}
 
 async function main(): Promise<void> {
 	let stats: UsageCounts
@@ -69,7 +65,7 @@ async function main(): Promise<void> {
 	let totalBytes = 0
 
 	for (const [hash, uses] of entries) {
-		const path = getAudioPath(hash)
+		const path = getDiskPath(hash)
 
 		try {
 			const info = await stat(path)

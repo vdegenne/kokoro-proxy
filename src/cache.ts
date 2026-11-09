@@ -23,14 +23,12 @@ const inFlight = new Map<string, Promise<void>>()
 
 let memoryCacheSize = 0
 
-function getDiskPath(hash: string): string {
-	return join(
-		config.cacheDir,
-		'audio',
-		hash.slice(0, 2),
-		hash.slice(2, 4),
-		`${hash}.mp3`,
-	)
+export function getAudioPath(hash: string): string {
+	return `audio/${hash.slice(0, 2)}/${hash.slice(2, 4)}/${hash}.mp3`
+}
+
+export function getDiskPath(hash: string): string {
+	return join(config.cacheDir, getAudioPath(hash))
 }
 
 function getMemory(hash: string): Buffer | undefined {
