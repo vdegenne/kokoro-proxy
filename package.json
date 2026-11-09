@@ -1,45 +1,52 @@
 {
-  "name": "kokoro-proxy",
-  "version": "0.1.1",
-  "description": "",
-  "type": "module",
-  "main": "",
-  "module": "",
-  "exports": {
-    ".": {}
-  },
-  "types": "",
-  "files": [],
-  "scripts": {
-    "build": "wireit",
-    "serve": "wireit"
-  },
-  "devDependencies": {
-    "@types/node": "^26.6.5",
-    "typescript": "^7.0.2",
-    "wireit": "^0.15.0"
-  },
-  "wireit": {
-    "build": {
-      "command": "tsc --pretty",
-      "clean": "if-file-deleted",
-      "files": [
-        "./tsconfig.json",
-        "./src"
-      ],
-      "output": [
-        "./lib"
-      ]
-    },
-    "serve": {
-      "service": true,
-      "command": "node ./lib/server.js",
-      "dependencies": ["build"],
-      "files": []
-    }
-  },
-  "dependencies": {
-    "@hono/node-server": "^2.1.5",
-    "hono": "^4.13.14"
-  }
+	"name": "@vdegenne/kokoro-proxy",
+	"version": "0.1.2",
+	"description": "A lightweight Kokoro TTS proxy with audio caching and reusable utilities.",
+	"type": "module",
+	"exports": {
+		"./core": {
+			"types": "./lib/core.d.ts",
+			"import": "./lib/core.js"
+		}
+	},
+	"files": [
+		"lib"
+	],
+	"bin": {
+		"kokoro-proxy": "./lib/server.js"
+	},
+	"scripts": {
+		"build": "wireit",
+		"serve": "wireit"
+	},
+	"devDependencies": {
+		"@types/node": "^26.6.5",
+		"typescript": "^7.0.2",
+		"wireit": "^0.15.0"
+	},
+	"wireit": {
+		"build": {
+			"command": "tsc --pretty",
+			"clean": "if-file-deleted",
+			"files": [
+				"./tsconfig.json",
+				"./src"
+			],
+			"output": [
+				"./lib"
+			]
+		},
+		"serve": {
+			"service": true,
+			"command": "node ./lib/server.js",
+			"dependencies": [
+				"build"
+			],
+			"files": []
+		}
+	},
+	"dependencies": {
+		"@hono/node-server": "^2.1.5",
+		"hono": "^4.13.14"
+	}
 }
