@@ -6,8 +6,7 @@ import {Readable} from 'node:stream'
 import {pipeline} from 'node:stream/promises'
 
 import {config} from './config.js'
-import {getAudioPath} from './core.js'
-import {getCacheKey, type SpeechOptions} from './hash.js'
+import {getAudioPath, getCacheKey, type SpeechOptions} from './core.js'
 import {recordUsage} from './stats.js'
 
 export interface CachedAudio {
