@@ -1,9 +1,14 @@
 {
 	"name": "@vdegenne/kokoro-proxy",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"description": "A lightweight Kokoro TTS proxy with audio caching and reusable utilities.",
 	"type": "module",
 	"exports": {
+		".": {
+			"types": "./lib/tts.d.ts",
+			"import": "./lib/tts.js",
+			"default": "./lib/tts.js"
+		},
 		"./core": {
 			"types": "./lib/core.d.ts",
 			"import": "./lib/core.js"
@@ -47,6 +52,7 @@
 	},
 	"dependencies": {
 		"@hono/node-server": "^2.1.6",
+		"@vdegenne/kokoro": "^0.1.27",
 		"hono": "^4.13.17"
 	}
 }

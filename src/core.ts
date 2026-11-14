@@ -1,11 +1,13 @@
-export interface SpeechOptions {
+export interface KokoroSpeechOptions {
 	input: string
 	voice: string
 	speed: number
 	volume_multiplier: number
 }
 
-export async function getCacheKey(options: SpeechOptions): Promise<string> {
+export async function getCacheKey(
+	options: KokoroSpeechOptions,
+): Promise<string> {
 	const payload = JSON.stringify([
 		options.input,
 		options.voice,
