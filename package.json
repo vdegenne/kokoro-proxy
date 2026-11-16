@@ -16,6 +16,11 @@
 			"types": "./lib/client.d.ts",
 			"import": "./lib/client.js",
 			"default": "./lib/client.js"
+		},
+		"./core": {
+			"types": "./lib/core.d.ts",
+			"import": "./lib/core.js",
+			"default": "./lib/core.js"
 		}
 	},
 	"files": [
