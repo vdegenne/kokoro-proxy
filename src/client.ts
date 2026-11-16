@@ -1,4 +1,5 @@
-import {KokoroClient, KokoroFetchOptions, PlayOptions} from '@vdegenne/kokoro'
+import {KokoroClient, KokoroFetchOptions} from '@vdegenne/kokoro'
+import {KokoroSpeechOptions} from './core.js'
 
 /**
  * Specialized Kokoro client for proxy servers.
@@ -7,7 +8,7 @@ import {KokoroClient, KokoroFetchOptions, PlayOptions} from '@vdegenne/kokoro'
  */
 export class KokoroProxyClient extends KokoroClient {
 	protected override async fetchAudio(
-		options: PlayOptions,
+		options: KokoroSpeechOptions,
 		fetchOptions: KokoroFetchOptions,
 	): Promise<Blob> {
 		const params = new URLSearchParams({
