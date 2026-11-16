@@ -1,17 +1,21 @@
 {
 	"name": "@vdegenne/kokoro-proxy",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"description": "A lightweight Kokoro TTS proxy with audio caching and reusable utilities.",
 	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/vdegenne/kokoro-proxy.git"
+	},
+	"homepage": "https://github.com/vdegenne/kokoro-proxy#readme",
+	"bugs": {
+		"url": "https://github.com/vdegenne/kokoro-proxy/issues"
+	},
 	"exports": {
 		".": {
-			"types": "./lib/tts.d.ts",
-			"import": "./lib/tts.js",
-			"default": "./lib/tts.js"
-		},
-		"./core": {
-			"types": "./lib/core.d.ts",
-			"import": "./lib/core.js"
+			"types": "./lib/client.d.ts",
+			"import": "./lib/client.js",
+			"default": "./lib/client.js"
 		}
 	},
 	"files": [
@@ -51,8 +55,8 @@
 		}
 	},
 	"dependencies": {
-		"@hono/node-server": "^2.1.6",
-		"@vdegenne/kokoro": "^0.1.27",
-		"hono": "^4.13.17"
+		"@hono/node-server": "^2.1.8",
+		"@vdegenne/kokoro": "^0.1.31",
+		"hono": "^4.13.19"
 	}
 }

@@ -1,0 +1,2 @@
+- [ ] Réduire max-age : par exemple à 1 jour ou 1 semaine. Une fois cette durée écoulée, le navigateur recontactera le serveur et pourra utiliser ETag / If-None-Match pour éviter de retélécharger un fichier inchangé.
+- [ ] Permettre aux clients de pouvoir abort les requetes grace a un signal.
