@@ -1,8 +1,10 @@
 #!/usr/bin/env node
+import {readFileSync} from 'node:fs'
+import {Readable} from 'node:stream'
+
 import {serve} from '@hono/node-server'
 import {Hono} from 'hono'
 import {cors} from 'hono/cors'
-import {Readable} from 'node:stream'
 
 import {getSpeech} from './cache.js'
 import {config} from './config.js'
@@ -13,11 +15,13 @@ const app = new Hono()
 app.use(
 	'*',
 	cors({
-		origin: [
-			'http://localhost:35107',
-			'https://glaizme.web.app',
-			'https://gl-ai-z.win',
-		],
+		origin: function (origin) {
+			if (/^https?:\/\/localhost(?::\d+)?$/.test(origin)) {
+				return origin
+			}
+
+			return config.corsOrigins.includes(origin) ? origin : null
+		},
 		allowMethods: ['GET', 'POST', 'OPTIONS'],
 		allowHeaders: ['Content-Type', 'Authorization'],
 	}),
@@ -185,14 +189,54 @@ const server = serve({
 	port: config.port,
 })
 
+await new Promise<void>(function (resolve, reject) {
+	server.once('listening', resolve)
+	server.once('error', reject)
+})
+
+const {version} = JSON.parse(
+	readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
+) as {version: string}
+
+const c = {
+	reset: '\x1B[0m',
+	bold: '\x1B[1m',
+	dim: '\x1B[2m',
+	green: '\x1B[32m',
+	red: '\x1B[31m',
+	cyan: '\x1B[36m',
+	yellow: '\x1B[33m',
+	magenta: '\x1B[35m',
+}
+
+const corsOrigins = config.corsOrigins
+
 console.log(`
-##############################
-#       Kokoro Proxy         #
-##############################
-# Server:  http://${config.host}:${config.port}
-# Cache:   ${config.cacheDir}
-# Upstream: ${config.upstreamUrl}
-##############################
+${c.magenta}${c.bold}┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                 KOKORO PROXY                  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛${c.reset}
+
+  ${c.dim}SERVER${c.reset}
+  ${c.bold}Version${c.reset}          ${version}
+  ${c.bold}Address${c.reset}          http://${config.host}:${config.port}
+
+  ${c.dim}UPSTREAM${c.reset}
+  ${c.bold}Endpoint${c.reset}         ${config.upstreamUrl}
+
+  ${c.dim}STORAGE${c.reset}
+  ${c.bold}Cache directory${c.reset}  ${config.cacheDir}
+
+  ${c.dim}CORS ORIGINS (${corsOrigins.length + 1})${c.reset}
+  ${c.green}●${c.reset} http://localhost:*
+${
+	corsOrigins.length
+		? corsOrigins
+				.map((origin) => `  ${c.green}●${c.reset} ${origin}`)
+				.join('\n')
+		: `  ${c.red}● No additional origins configured${c.reset}`
+}
+
+${c.dim}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${c.reset}
 `)
 
 let shuttingDown = false

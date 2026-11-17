@@ -37,4 +37,11 @@ export const config = {
 	memoryCacheMaxBytes: getPositiveInteger('MEMORY_CACHE_MAX_BYTES', 100 * mib),
 
 	statsFlushIntervalMs: getPositiveInteger('STATS_FLUSH_INTERVAL_MS', 30_000),
+
+	corsOrigins:
+		process.env.CORS_ORIGINS?.split(',')
+			.map(function (origin) {
+				return origin.trim()
+			})
+			.filter(Boolean) ?? [],
 } as const
