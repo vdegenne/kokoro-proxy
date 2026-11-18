@@ -1,5 +1,7 @@
 import {resolve} from 'node:path'
 
+import 'dotenv/config'
+
 function getPositiveInteger(name: string, fallback: number): number {
 	const value = process.env[name]
 
