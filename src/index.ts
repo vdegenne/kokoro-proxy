@@ -8,6 +8,7 @@ import {cors} from 'hono/cors'
 
 import {getSpeech} from './cache.js'
 import {config} from './config.js'
+import {Voice} from './core.js'
 import {closeStats} from './stats.js'
 
 const app = new Hono()
@@ -109,7 +110,7 @@ app.get('/v1/audio/speech', async (c) => {
 	try {
 		const audio = await getSpeech({
 			input,
-			voice,
+			voice: voice as Voice,
 			speed,
 			volume_multiplier: volumeMultiplier,
 		})

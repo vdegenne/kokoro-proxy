@@ -1,6 +1,6 @@
 {
 	"name": "@vdegenne/kokoro-proxy",
-	"version": "0.1.16",
+	"version": "0.1.17",
 	"description": "A lightweight Kokoro TTS proxy with audio caching and reusable utilities.",
 	"type": "module",
 	"repository": {
@@ -52,7 +52,7 @@
 		},
 		"serve": {
 			"service": true,
-			"command": "node ./lib/server.js",
+			"command": "node ./lib/index.js",
 			"dependencies": [
 				"build"
 			],
@@ -61,7 +61,7 @@
 	},
 	"dependencies": {
 		"@hono/node-server": "^2.1.9",
-		"@vdegenne/kokoro": "^0.1.33",
+		"@vdegenne/kokoro": "^0.1.34",
 		"hono": "^4.13.19"
 	}
 }

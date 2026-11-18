@@ -6,7 +6,7 @@ import {Readable} from 'node:stream'
 import {pipeline} from 'node:stream/promises'
 
 import {config} from './config.js'
-import {getAudioPath, getCacheKey, type KokoroSpeechOptions} from './core.js'
+import {getAudioPath, getCacheKey, type SpeechOptions} from './core.js'
 import {recordUsage} from './stats.js'
 
 export interface CachedAudio {
@@ -92,10 +92,7 @@ async function getDiskAudio(hash: string): Promise<CachedAudio | undefined> {
 	}
 }
 
-async function synthesize(
-	options: KokoroSpeechOptions,
-	hash: string,
-): Promise<void> {
+async function synthesize(options: SpeechOptions, hash: string): Promise<void> {
 	const path = getDiskPath(hash)
 	const directory = join(path, '..')
 	const tempPath = `${path}.${randomUUID()}.tmp`
@@ -152,9 +149,7 @@ async function synthesize(
 	}
 }
 
-export async function getSpeech(
-	options: KokoroSpeechOptions,
-): Promise<CachedAudio> {
+export async function getSpeech(options: SpeechOptions): Promise<CachedAudio> {
 	const hash = await getCacheKey(options)
 
 	let audio = getMemory(hash)
