@@ -12,6 +12,25 @@ import {closeStats} from './stats.js'
 
 const app = new Hono()
 
+const UPSTREAM_CHECK_INTERVAL = 3000
+const UPSTREAM_CHECK_TIMEOUT = 2000
+
+let upstreamAvailable = false
+
+async function checkUpstream(): Promise<boolean> {
+	try {
+		const response = await fetch(`${config.upstreamUrl}/health`, {
+			signal: AbortSignal.timeout(UPSTREAM_CHECK_TIMEOUT),
+		})
+
+		return response.ok
+	} catch {
+		return false
+	}
+}
+
+upstreamAvailable = await checkUpstream()
+
 app.use(
 	'*',
 	cors({
@@ -213,7 +232,7 @@ const corsOrigins = config.corsOrigins
 
 console.log(`
 ${c.magenta}${c.bold}┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃                 KOKORO PROXY                  ┃
+┃                 KOKORO PROXY                 ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛${c.reset}
 
   ${c.dim}SERVER${c.reset}
@@ -222,6 +241,11 @@ ${c.magenta}${c.bold}┏━━━━━━━━━━━━━━━━━━�
 
   ${c.dim}UPSTREAM${c.reset}
   ${c.bold}Endpoint${c.reset}         ${config.upstreamUrl}
+  ${c.bold}Status${c.reset}           ${
+		upstreamAvailable
+			? `${c.green}● Connected${c.reset}`
+			: `${c.red}● UNREACHABLE${c.reset}`
+	}
 
   ${c.dim}STORAGE${c.reset}
   ${c.bold}Cache directory${c.reset}  ${config.cacheDir}
@@ -239,6 +263,30 @@ ${
 ${c.dim}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${c.reset}
 `)
 
+let checkingUpstream = false
+
+const upstreamMonitor = setInterval(async function () {
+	if (checkingUpstream || shuttingDown) return
+
+	checkingUpstream = true
+
+	try {
+		const available = await checkUpstream()
+
+		if (available !== upstreamAvailable) {
+			upstreamAvailable = available
+
+			if (available) {
+				console.log(`${c.green}[UPSTREAM] Connection restored.${c.reset}`)
+			} else {
+				console.log(`${c.red}[UPSTREAM] Connection lost!${c.reset}`)
+			}
+		}
+	} finally {
+		checkingUpstream = false
+	}
+}, UPSTREAM_CHECK_INTERVAL)
+
 let shuttingDown = false
 
 async function shutdown(signal: NodeJS.Signals): Promise<void> {
@@ -246,6 +294,8 @@ async function shutdown(signal: NodeJS.Signals): Promise<void> {
 	shuttingDown = true
 
 	console.log(`\nReceived ${signal}. Shutting down Kokoro Proxy...`)
+
+	clearInterval(upstreamMonitor)
 
 	server.close()
 
