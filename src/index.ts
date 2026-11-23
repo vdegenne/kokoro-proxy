@@ -36,6 +36,10 @@ app.use(
 	'*',
 	cors({
 		origin: function (origin) {
+			if (config.corsOrigins.includes('*')) {
+				return '*'
+			}
+
 			if (/^https?:\/\/localhost(?::\d+)?$/.test(origin)) {
 				return origin
 			}
